@@ -51,14 +51,14 @@ class Post extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
-            'title' => 'Title',
-            'content' => 'Content',
-            'tags' => 'Tags',
-            'status' => 'Status',
-            'create_time' => 'Create Time',
-            'update_time' => 'Update Time',
-            'author_id' => 'Author ID',
+            'id' => '文章 ID',
+            'title' => '标题',
+            'content' => '内容',
+            'tags' => '标签',
+            'status' => '状态',
+            'create_time' => '创建时间',
+            'update_time' => '修改时间',
+            'author_id' => '作者',
         ];
     }
 
@@ -81,7 +81,7 @@ class Post extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus0()
+    public function getPostStatus()
     {
         return $this->hasOne(Poststatus::className(), ['id' => 'status']);
     }
