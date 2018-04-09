@@ -12,6 +12,10 @@ use common\models\Post;
  */
 class PostSearch extends Post
 {
+    public function attributes()
+    {
+        return array_merge(parent::attributes(), ['author_name']);
+    }
     /**
      * @inheritdoc
      */
@@ -19,7 +23,7 @@ class PostSearch extends Post
     {
         return [
             [['id', 'status', 'create_time', 'update_time', 'author_id'], 'integer'],
-            [['title', 'content', 'tags'], 'safe'],
+            [['title', 'content', 'tags', 'author_name'], 'safe'],
         ];
     }
 
@@ -47,6 +51,13 @@ class PostSearch extends Post
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
+            'pagination' => ['pageSize' => 10],
+            'sort' => [
+                'defaultOrder' => [
+                    'id' => SORT_DESC,
+                ],
+                //'attributes' => ['id', 'title'],
+            ],
         ]);
 
         $this->load($params);
@@ -69,6 +80,14 @@ class PostSearch extends Post
         $query->andFilterWhere(['like', 'title', $this->title])
             ->andFilterWhere(['like', 'content', $this->content])
             ->andFilterWhere(['like', 'tags', $this->tags]);
+
+        $query->join('INNER JOIN', 'adminuser', 'post.author_id = adminuser.id');
+        $query->andFilterWhere(['like', 'adminuser.nickname', $this->author_name]);
+
+        $dataProvider->sort->attributes['author_name'] = [
+            'asc' => ['adminuser.nickname' => SORT_ASC],
+            'desc' => ['adminuser.nickname' => SORT_DESC],
+        ];
 
         return $dataProvider;
     }
