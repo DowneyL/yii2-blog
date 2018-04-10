@@ -53,13 +53,13 @@ class Comment extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'content' => 'Content',
-            'status' => 'Status',
-            'create_time' => 'Create Time',
-            'userid' => 'Userid',
-            'email' => 'Email',
-            'url' => 'Url',
-            'post_id' => 'Post ID',
+            'content' => '内容',
+            'status' => '状态',
+            'create_time' => '创建时间',
+            'userid' => '作者',
+            'email' => 'email',
+            'url' => 'url',
+            'post_id' => '文章标题',
         ];
     }
 
@@ -74,7 +74,7 @@ class Comment extends \yii\db\ActiveRecord
     /**
      * @return \yii\db\ActiveQuery
      */
-    public function getStatus0()
+    public function getCommentStatus()
     {
         return $this->hasOne(Commentstatus::className(), ['id' => 'status']);
     }
@@ -85,5 +85,36 @@ class Comment extends \yii\db\ActiveRecord
     public function getUser()
     {
         return $this->hasOne(User::className(), ['id' => 'userid']);
+    }
+
+    public function getShortContent()
+    {
+        $content = strip_tags($this->content);
+
+        $contentLen = mb_strlen($content);
+
+        return mb_substr($content, 0, 10, 'utf-8') . (($contentLen > 10) ? '...' : '');
+    }
+
+    public function approve()
+    {
+        $this->status = 2;
+        return $this->save();
+    }
+
+    public static function getPengdingCommentCount()
+    {
+        return Comment::find()->where(['status' => 1])->count();
+    }
+
+    public function beforeSave($insert)
+    {
+        if(parent::beforeSave($insert)) {
+            if($insert) {
+                $this->create_time = time();
+            }
+            return true;
+        }
+        else return false;
     }
 }
