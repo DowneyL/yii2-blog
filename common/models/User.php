@@ -20,6 +20,8 @@ use yii\web\IdentityInterface;
  * @property integer $created_at
  * @property integer $updated_at
  * @property string $password write-only password
+ *
+ * @property Comment[] $comments
  */
 class User extends ActiveRecord implements IdentityInterface
 {
@@ -53,6 +55,21 @@ class User extends ActiveRecord implements IdentityInterface
         return [
             ['status', 'default', 'value' => self::STATUS_ACTIVE],
             ['status', 'in', 'range' => [self::STATUS_ACTIVE, self::STATUS_DELETED]],
+            [['email'], 'unique'],
+            [['email'], 'required'],
+            [['email'], 'email'],
+        ];
+    }
+
+    public function attributeLabels()
+    {
+        return [
+            'id' => 'ID',
+            'username' => '用户名',
+            'email' => '邮箱',
+            'status' => '状态',
+            'created_at' => '注册时间',
+            'updated_at' => '修改时间',
         ];
     }
 
@@ -185,5 +202,20 @@ class User extends ActiveRecord implements IdentityInterface
     public function removePasswordResetToken()
     {
         $this->password_reset_token = null;
+    }
+
+    public function getComments()
+    {
+        return $this->hasMany(Comment::className(), ['userid' => 'id']);
+    }
+
+    public static function allStatus()
+    {
+        return [self::STATUS_ACTIVE => '正常', self::STATUS_DELETED => '已删除'];
+    }
+
+    public function getUserStatus()
+    {
+        return $this->status == self::STATUS_ACTIVE ? '正常' : '已删除';
     }
 }

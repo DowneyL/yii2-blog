@@ -57,8 +57,8 @@ class Adminuser extends \yii\db\ActiveRecord implements IdentityInterface
             'password_reset_token' => 'Password Reset Token',
             'nickname' => '昵称',
             'password' => '密码',
-            'email' => '邮箱',
-            'profile' => 'Profile',
+            'email' => 'email',
+            'profile' => '简介',
         ];
     }
 

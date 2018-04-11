@@ -65,7 +65,7 @@ $this->params['breadcrumbs'][] = $this->title;
             //'post_id',
             [
                 'class' => 'yii\grid\ActionColumn',
-                'template' => '{view}{update}{delete}{approve}',
+                'template' => '{view} {update} {delete} {approve}',
                 'buttons' => [
                     'approve' => function ($url, $model, $key) {
                         $options = [
