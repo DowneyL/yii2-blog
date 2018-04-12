@@ -10,6 +10,8 @@ use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
 use backend\models\SignupForm;
 use backend\models\ResetpwdForm;
+use common\models\AuthAssignment;
+use common\models\AuthItem;
 
 /**
  * AdminuserController implements the CRUD actions for Adminuser model.
@@ -69,8 +71,8 @@ class AdminuserController extends Controller
         $model = new SignupForm();
 
         if ($model->load(Yii::$app->request->post())) {
-            if($user = $model->signup()) {
-                if(Yii::$app->user->login($user)) {
+            if ($user = $model->signup()) {
+                if (Yii::$app->user->login($user)) {
                     return $this->goHome();
                 }
             }
@@ -136,13 +138,62 @@ class AdminuserController extends Controller
         $model = new ResetpwdForm();
 
         if ($model->load(Yii::$app->request->post())) {
-            if($model->resetPassword($id)) {
+            if ($model->resetPassword($id)) {
                 return $this->redirect(['index']);
             }
         }
 
         return $this->render('resetpwd', [
             'model' => $model,
+        ]);
+    }
+
+    public function actionPrivilege($id)
+    {
+        // step3. 用表单提交上来的数据，更新 AuthAssignment 表
+        if(isset($_POST['newPri'])) {
+            AuthAssignment::deleteAll('user_id=:id', ['id' => $id]);
+            $newPri = $_POST['newPri'];
+            $len = count($newPri);
+            for($i = 0; $i < $len; $i++) {
+                $aPri = new AuthAssignment();
+                $aPri->item_name = $newPri[$i];
+                $aPri->user_id = $id;
+                $aPri->created_at = time();
+
+                $aPri->save();
+            }
+            return $this->redirect(['index']);
+        }
+
+        $model = Adminuser::findOne($id);
+        // step1. 找出所有权限，提供给 checkboxlist
+        $allPrivileges = AuthItem::find()
+            ->select(['name', 'description'])
+            ->where(['type' => 1])
+            ->orderBy('description')
+            ->all();
+
+        foreach ($allPrivileges as $pri) {
+            $allPrivilegesArray[$pri->name] = $pri->description;
+        }
+
+        // step2. 当前用户的权限
+        $AuthAssignments = AuthAssignment::find()
+            ->select(['item_name'])
+            ->where(['user_id' => $id])
+            ->all();
+
+        $AuthAssignmentsArray = array();
+        foreach ($AuthAssignments as $AuthAssignment) {
+            array_push($AuthAssignmentsArray, $AuthAssignment->item_name);
+        }
+
+        // step4. 渲染多选按钮
+        return $this->render('privilege', [
+            'model' => $model,
+            'AuthAssignmentsArray' => $AuthAssignmentsArray,
+            'allPrivilegesArray' => $allPrivilegesArray,
         ]);
     }
 }
