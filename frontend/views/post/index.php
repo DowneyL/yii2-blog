@@ -1,6 +1,7 @@
 <?php
 
 use yii\widgets\ListView;
+use frontend\components\TagsCloudWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\PostSearch */
@@ -54,7 +55,9 @@ $this->title = '文章列表';
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-tags" aria-hidden="true"></span> 标签云
                     </li>
-                    <li class="list-group-item">标签云</li>
+                    <li class="list-group-item">
+                        <?= TagsCloudWidget::widget(['tags' => $tags]) ?>
+                    </li>
                 </div>
             </ul>
             <ul class="list-group">
