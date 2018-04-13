@@ -2,6 +2,7 @@
 
 use yii\widgets\ListView;
 use frontend\components\TagsCloudWidget;
+use frontend\components\RctCommentsWidget;
 
 /* @var $this yii\web\View */
 /* @var $searchModel common\models\PostSearch */
@@ -65,7 +66,9 @@ $this->title = '文章列表';
                     <li class="list-group-item">
                         <span class="glyphicon glyphicon-search" aria-hidden="true"></span> 最新回复
                     </li>
-                    <li class="list-group-item">最新回复</li>
+                    <li class="list-group-item">
+                        <?= RctCommentsWidget::widget(['recent_comments' => $recent_comments]) ?>
+                    </li>
                 </div>
             </ul>
         </div>

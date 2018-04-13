@@ -109,12 +109,21 @@ class Comment extends \yii\db\ActiveRecord
 
     public function beforeSave($insert)
     {
-        if(parent::beforeSave($insert)) {
-            if($insert) {
+        if (parent::beforeSave($insert)) {
+            if ($insert) {
                 $this->create_time = time();
             }
             return true;
-        }
-        else return false;
+        } else return false;
     }
+
+    public static function findRecentComments($limit = 10)
+    {
+        return Comment::find()
+            ->where(['status' => 2])
+            ->orderBy('create_time DESC')
+            ->limit($limit)
+            ->all();
+    }
+
 }
