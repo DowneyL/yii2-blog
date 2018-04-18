@@ -21,7 +21,7 @@ $this->title = $postTitle;
 
             <ol class="breadcrumb">
                 <li><a href="<?= Yii::$app->homeUrl ?>">首页</a></li>
-                <li><a href="<?= Yii::$app->homeUrl ?>?r=post/index">文章列表</a></li>
+                <li><a href="<?= Yii::$app->urlManager->createUrl(['post/index']); ?>">文章列表</a></li>
                 <li class="active"><?= $postTitle ?></li>
             </ol>
 
